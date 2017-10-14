@@ -79,7 +79,6 @@ const styles = theme => ({
     content: {
         backgroundColor: theme.palette.background.default,
         width: '100%',
-        padding: theme.spacing.unit * 3,
         flex: 1,
         height: 'calc(100% - 56px)',
         marginTop: 56,
