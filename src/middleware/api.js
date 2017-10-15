@@ -21,11 +21,11 @@ export default store => next => action => {
     const actionWithoutCall = { ...action };
     delete actionWithoutCall.meta[CALL_API];
 
-    let { query, responseType } = callApi;
-    let { vars } = action.payload;
 
     next(actionWithoutCall);
 
+    let { query, responseType } = callApi;
+    let { vars } = action.payload;
     let meta = {}
     if(action.type === PAGE_REQUEST && responseType === PAGE_RESPONSE) {
         meta = {

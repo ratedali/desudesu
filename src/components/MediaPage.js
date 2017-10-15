@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
+import { CircularProgress, LinearProgress } from 'material-ui/Progress';
 import Grid from 'material-ui/Grid';
+import Snackbar from 'material-ui/Snackbar';
+import Button from 'material-ui/Button';
+import IconButton from 'material-ui/IconButton';
 import MediaPageItem from './MediaPageItem';
 
 const styles = theme => ({
@@ -9,6 +13,17 @@ const styles = theme => ({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'flex-start',
+    },
+    snackbarClose: {
+        width: theme.spacing.unit * 4,
+        height: theme.spacing.unit * 4,
+    },
+    circularProgress: {
+        margin: `0 ${theme.spacing.unit * 2}px`,
+    },
+    linearProgress: {
+        marginTop: theme.spacing.unit * 3,
+        width: '100%',
     }
 });
 
@@ -27,20 +42,27 @@ class MediaPage extends Component {
         loadMediaPage: PropTypes.func.isRequired,
         reloadMediaPages: PropTypes.func.isRequired,
     }
-    
-    constructor(props) {
-        super(props);
-        this.handleScroll = (event) => {
-            const trigger = 500; // pixels trigger next page fetch
-            const currentScroll = window.pageYOffset + window.innerHeight;
-            const fullHeight = window.document.body.scrollHeight;
-            if(currentScroll >= fullHeight - trigger && !this.props.isLoading) {
-                window.requestAnimationFrame(() => {
-                    this.loadPage(this.props.page + 1);
-                });
-            }
-        };
+
+    state = {
+        snackbar: false,
     }
+
+    handleSnackBarClose = (e, reason) => {
+        if(reason != 'clickaway') {
+            this.setState({ snackbar: false });
+        }
+    }
+
+    handleScroll = (event) => {
+        const currentScroll = window.pageYOffset + window.innerHeight;
+        const fullHeight = window.document.body.scrollHeight;
+        const trigger = Math.floor(fullHeight / 5); // pixels trigger next page fetch
+        if(currentScroll >= fullHeight - trigger && !this.props.isLoading) {
+            window.requestAnimationFrame(() => {
+                this.loadPage(this.props.page + 1);
+            });
+        }
+    };
 
     componentWillMount() {
         this.loadPage(this.props.page);
@@ -61,6 +83,11 @@ class MediaPage extends Component {
                     this.reloadPages();
                 }
         }
+
+        if(this.props.error && !this.state.snackbar) {
+            this.setState({ snackbar: true });
+        }
+
     }
 
     componentWillUnmount() {
@@ -117,33 +144,47 @@ class MediaPage extends Component {
             classes
         } = this.props;
 
-        if(error && !media) {
-            return <p> Error: {error} </p>;
-        }
-
-        if(isLoading && !media) {
-            return <p> Loading... </p>;
-        }
-
-        if(!media) {
-            return null;
-        }
-
         return (
-            <Grid container justify='space-around' direction='row' wrap="wrap">
-                {
-                    media.map(media => (
-                        <Grid item key={media.id}
-                        classes={{
-                            typeItem: classes.gridItem
-                        }}
-                        xs={12} sm={6} md={4} lg={3}>
-                            <MediaPageItem media={media} type={mediaType}/>
-                        </Grid>))
-                }
-                { error ? <p>Error loading next page</p> : null }
-                { isLoading ? <p>Loading next page </p> : null }
-            </Grid>
+            <div>
+                <Grid container justify='space-around' direction='row' wrap="wrap">
+                    { media ?
+                        media.map(media => (
+                            <Grid item key={media.id}
+                            classes={{
+                                typeItem: classes.gridItem
+                            }}
+                            xs={12} sm={6} md={4} lg={3}>
+                                <MediaPageItem media={media} type={mediaType}/>
+                            </Grid>)) :
+                            isLoading ? 
+                                <CircularProgress classNames={classes.progress} size={400} color="accent"/> :
+                                null
+                    }
+                    {
+                        (media && isLoading) ? 
+                            <LinearProgress color="accent"/> :
+                            null
+                    }
+                </Grid>
+                <Snackbar
+                 anchorOrigin={{
+                     vertical: 'bottom',
+                     horizontal: 'left',
+                 }}
+                 open={this.state.snackbar}
+                 autoHideDuration={3000}
+                 onRequestClose={this.handleSnackBarClose}
+                 SnackbarContentProps={{
+                     'aria-describedby': 'mp-error',
+                 }}
+                 message={<span id="mp-error">There was an error loading the page</span>}
+                 action={[
+                     <IconButton key="close" aria-label="close" color="inherit" 
+                      className={classes.snackbarClose} onClick={this.handleSnackBarClose}>
+                         close
+                     </IconButton>
+                 ]}/>
+            </div>
         );
     }
 }

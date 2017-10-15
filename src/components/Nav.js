@@ -219,12 +219,12 @@ class Nav extends Component {
                     </Drawer>
                 </Hidden>
                 <div className={classNames(classes.content, this.state.drawer && classes.contentShift)}>
-                        <div className={classes.filter}>
-                        <Switch >
-                            <Route path="/browse/:mediaType/search/:search" component={MediaPageFilter}/>
-                            <Route path="/browse/:mediaType/:seasonYear/:season" component={MediaPageFilter}/>
-                        </Switch>
-                        </div>
+                    <div className={classes.filter}>
+                    <Switch >
+                        <Route path="/browse/:mediaType/search/:search" component={MediaPageFilter}/>
+                        <Route path="/browse/:mediaType/:seasonYear/:season" component={MediaPageFilter}/>
+                    </Switch>
+                    </div>
                     {this.props.children}
                 </div>
             </div>
