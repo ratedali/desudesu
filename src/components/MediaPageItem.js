@@ -7,8 +7,6 @@ import IconButton from 'material-ui/IconButton';
 import Typography from 'material-ui/Typography';
 import Hidden from 'material-ui/Hidden';
 import Collapse from 'material-ui/transitions/Collapse';
-import { mediaUrlById } from "../utils"
-
 const styles = theme => ({
     card: {
         width: '240px',
@@ -50,7 +48,6 @@ const styles = theme => ({
 class MediaPageItem extends Component {
     static propTypes = {
         media: PropTypes.object.isRequired,
-        type: PropTypes.string.isRequired
     };
 
     state = {
@@ -60,7 +57,7 @@ class MediaPageItem extends Component {
     toggleDesc = () => this.setState({ expanded: !this.state.expanded });
 
     render() {
-        const { classes, type, media } = this.props;
+        const { classes, media } = this.props;
         const desc = (
             <CardContent className={classes.desc}>
                 <Typography paragraph>

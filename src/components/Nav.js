@@ -12,6 +12,8 @@ import Typography from "material-ui/Typography";
 import Icon from "material-ui/Icon";
 import IconButton from "material-ui/IconButton";
 import Hidden from "material-ui/Hidden";
+import { FormControl } from "material-ui/Form";
+import Input from "material-ui/Input";
 import MediaPageFilter from "../containers/MediaPageFilterContainer";
 
 const drawerWidth = 320;
@@ -71,10 +73,25 @@ const styles = theme => ({
         background: theme.palette.primary["500"],
     },
     selectedSectionText: {
-        color: theme.palette.shades.dark.text.primary
+        color: theme.palette.shades.dark.text.primary,
     },
     title: {
         flex: 1
+    },
+    search: {
+        display: "inline-flex",
+        flexDirection: "row",
+        alignItems: "center",
+        background: theme.palette.primary["400"],
+        "&:hover": {
+            background: theme.palette.primary["300"],
+        }
+    },
+    searchIcon: {
+        margin: `0 ${theme.spacing.unit * 2}px`,
+    },
+    searchText: {
+        color: theme.palette.shades.dark.input.inputText,
     },
     content: {
         backgroundColor: theme.palette.background.default,
@@ -112,7 +129,8 @@ class Nav extends Component {
 
     static propTypes = {
         currentSection: PropTypes.string.isRequired,
-        navigateTo: PropTypes.func.isRequired
+        navigateTo: PropTypes.func.isRequired,
+        searchFor: PropTypes.func.isRequired,
     }
 
     state = {
@@ -127,6 +145,11 @@ class Nav extends Component {
     closeDrawer = () => this.setState({ drawer: false });
 
     navigateTo = path => () => this.props.navigateTo(path)
+    handleSearch = mediaType => e => {
+        if(e.keyCode === 13 || e.which === 13) {
+            this.props.searchFor(mediaType, e.target.value);
+        }
+    }
 
     render() {
         const { classes, theme, currentSection } = this.props;
@@ -175,6 +198,17 @@ class Nav extends Component {
                     className={classes.title} noWrap>
                         DesuDesu
                     </Typography>
+                    <Route path="/browse/:mediaType" render={({match}) => 
+                        (
+                            <form>
+                            <FormControl className={classes.search}>
+                                    <Icon className={classes.searchIcon}>search</Icon>
+                                    <Input disableUnderline aria-label="Search" 
+                                    className={classes.searchText}
+                                     onKeyPress={this.handleSearch(match.params.mediaType)}/>
+                                </FormControl>
+                            </form>
+                        )}/>
                     <IconButton color="contrast">settings</IconButton>
                     <IconButton color="contrast">account_circle</IconButton>
                 </Toolbar>

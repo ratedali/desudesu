@@ -4,7 +4,6 @@ import { withStyles } from 'material-ui/styles';
 import { CircularProgress, LinearProgress } from 'material-ui/Progress';
 import Grid from 'material-ui/Grid';
 import Snackbar from 'material-ui/Snackbar';
-import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import MediaPageItem from './MediaPageItem';
 
@@ -48,7 +47,7 @@ class MediaPage extends Component {
     }
 
     handleSnackBarClose = (e, reason) => {
-        if(reason != 'clickaway') {
+        if(reason !== 'clickaway') {
             this.setState({ snackbar: false });
         }
     }
@@ -140,7 +139,6 @@ class MediaPage extends Component {
             mediaType,
             isLoading,
             media,
-            error,
             classes
         } = this.props;
 

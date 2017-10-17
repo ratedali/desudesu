@@ -66,9 +66,10 @@ class MediaPageFilter extends Component{
                 <form className={classes.form} autoComplete="off">
                     <FormControl className={classes.formControl}>
                         <InputLabel htmlFor="mpf-seasons">Season</InputLabel>
-                        <Select value={season}
+                        <Select value={season || ""}
                         onChange={this.filterChange('season')}
                         input={<Input id="mpf-seasons"/>}>
+                            <MenuItem value="">None</MenuItem>
                             <MenuItem value={seasons.winter}>Winter</MenuItem>
                             <MenuItem value={seasons.spring}>Spring</MenuItem>
                             <MenuItem value={seasons.summer}>Summer</MenuItem>

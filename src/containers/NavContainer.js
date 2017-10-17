@@ -34,4 +34,13 @@ const navigateTo = path => dispatch => {
     }));
 }
 
-export default withRouter(connect(mapStateToProps, { navigateTo })(Nav));
+const searchFor = (mediaType, searchText) => dispatch => {
+    return dispatch(push({
+        pathname: `/browse/${mediaType.toLowerCase()}/search/${encodeURIComponent(searchText)}`,
+    }));
+}
+
+export default withRouter(connect(mapStateToProps, { 
+    navigateTo,
+    searchFor
+ })(Nav));
