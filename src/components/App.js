@@ -7,6 +7,7 @@ import orange from 'material-ui/colors/orange';
 import red from 'material-ui/colors/red';
 import Nav from "../containers/NavContainer";
 import MediaPage from '../containers/MediaPageContainer';
+import Login from '../containers/LoginContainer';
 
 const theme = createMuiTheme({
   palette: {
@@ -25,6 +26,7 @@ class App extends Component {
             <Nav>
               <main>
                 <Switch>
+                  <Route path="/login" component={Login}/>
                   <Route path="/browse/:mediaType/search/:search" component={MediaPage}/>
                   <Route path="/browse/:mediaType/:seasonYear/:season" component={MediaPage}/>
                   <Redirect to="/browse/anime/2017/fall"/>

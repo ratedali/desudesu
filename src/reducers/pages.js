@@ -1,4 +1,4 @@
-import { PAGE_REQUEST, PAGE_RESPONSE, RESET_PAGE_DATA } from '../actions/pageActions';
+import { PAGE_REQUEST, PAGE_RESPONSE, RESET_PAGE_DATA } from '../actions/page';
 
 export default function pageData(state = {}, action) {
     switch(action.type) {

@@ -2,6 +2,7 @@ import { connect } from "react-redux";
 import { withRouter, matchPath } from "react-router";
 import { push } from "react-router-redux";
 import Nav from "../components/Nav";
+import { refreshLogin } from "../actions/auth";
 
 const mapStateToProps = (state, ownProps) => {
     const {
@@ -23,8 +24,24 @@ const mapStateToProps = (state, ownProps) => {
     } else if (locationMatches("/", true)) {
         currentSection = "home";
     }
+
+    const {
+        auth: {
+            token
+        },
+        viewer: {
+            isLoading: userLoading,
+            error: userError,
+            user,
+        }
+    } = state;
+
     return {
-        currentSection
+        currentSection,
+        loggedIn: Boolean(token),
+        userLoading,
+        userError,
+        user
     };
 };
 
@@ -42,5 +59,6 @@ const searchFor = (mediaType, searchText) => dispatch => {
 
 export default withRouter(connect(mapStateToProps, { 
     navigateTo,
-    searchFor
+    searchFor,
+    refreshLogin
  })(Nav));

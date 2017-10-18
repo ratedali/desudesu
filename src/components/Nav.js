@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Route, Switch } from "react-router";
+import { Route, Switch, Link } from "react-router-dom";
 import classNames from 'classnames';
 import { withStyles } from "material-ui/styles";
 import AppBar from "material-ui/AppBar";
@@ -11,10 +11,13 @@ import Divider from "material-ui/Divider";
 import Typography from "material-ui/Typography";
 import Icon from "material-ui/Icon";
 import IconButton from "material-ui/IconButton";
+import Button from "material-ui/Button";
+import Avatar from "material-ui/Avatar";
 import Hidden from "material-ui/Hidden";
 import { FormControl } from "material-ui/Form";
 import Input from "material-ui/Input";
 import MediaPageFilter from "../containers/MediaPageFilterContainer";
+import apiSpec from "../apiSpec";
 
 const drawerWidth = 320;
 const styles = theme => ({
@@ -78,6 +81,10 @@ const styles = theme => ({
     title: {
         flex: 1
     },
+    navItem: {
+        margin: `0 ${theme.spacing.unit}px`,
+        textDecoration: 'none',
+    },
     search: {
         display: "inline-flex",
         flexDirection: "row",
@@ -129,8 +136,18 @@ class Nav extends Component {
 
     static propTypes = {
         currentSection: PropTypes.string.isRequired,
+        loggedIn: PropTypes.bool.isRequired,
+        user: PropTypes.shape({
+            name: PropTypes.string.isRequired,
+            avatar: PropTypes.shape({
+                medium: PropTypes.string,
+            }).isRequired,
+        }),
+        userLoading: PropTypes.bool,
+        userError: PropTypes.bool,
         navigateTo: PropTypes.func.isRequired,
         searchFor: PropTypes.func.isRequired,
+        refreshLogin: PropTypes.func.isRequired,
     }
 
     state = {
@@ -151,12 +168,47 @@ class Nav extends Component {
         }
     }
 
+    handleLogin = e => {
+        window.open(apiSpec.auth.url);
+        window.addEventListener('message', this.refreshMessageListener);
+    }
+
+    refreshMessageListener = e => {
+        if(e.data.done) {
+            console.log("refreshing");
+            this.props.refreshLogin();
+            window.removeEventListener('message', this.refreshMessageListener);
+        }
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('message', this.refreshMessageListener);
+    }
+
     render() {
-        const { classes, theme, currentSection } = this.props;
+        const { 
+            currentSection,
+            loggedIn,
+            user,
+            userLoading,
+            userError,
+            classes,
+            theme, 
+        } = this.props;
 
         const drawerContent = (
             <div>
                 <Divider/>
+                {user && !userLoading && !userError ? 
+                <div>
+                    <ListItem onClick={this.navigateTo('/profile')}>
+                        <Avatar alt={user.name} src={user.avatar.medium}/>
+                        <ListItemText primary="Profile" secondary={user.name}/>
+                    </ListItem>
+                    <Divider/>
+                </div> :
+                null
+                }
                 <List>
                     {[
                         ['/', 'home', 'Home', 'home'],
@@ -209,8 +261,15 @@ class Nav extends Component {
                                 </FormControl>
                             </form>
                         )}/>
-                    <IconButton color="contrast">settings</IconButton>
-                    <IconButton color="contrast">account_circle</IconButton>
+                    <IconButton color="contrast">
+                        settings
+                    </IconButton>
+                   { !loggedIn ?
+                    <IconButton color="contrast" onClick={this.handleLogin}>
+                        account_circle
+                    </IconButton> :
+                    null
+                   }
                 </Toolbar>
             </AppBar>
             <Hidden mdUp>

@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import apiSpec from "../apiSpec";
-import { loadMediaPage, reloadMediaPages } from '../actions/pageActions';
+import { loadMediaPage, reloadMediaPages } from '../actions/page';
 import MediaPage from '../components/MediaPage';
 import  _ from 'lodash/fp';
 

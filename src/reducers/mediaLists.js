@@ -1,4 +1,4 @@
-import { MEDIA_LISTS_REQUEST, MEDIA_LISTS_RESPONSE } from "../actions/listActions";
+import { MEDIA_LISTS_REQUEST, MEDIA_LISTS_RESPONSE } from "../actions/list";
 
 export default function mediaList(state = {}, action) {
     switch(action.type) {

@@ -1,12 +1,6 @@
 import { Lokka } from "lokka";
 import { Transport } from "lokka-transport-http";
-import { PAGE_REQUEST, PAGE_RESPONSE } from '../actions/pageActions';
-
-const client = new Lokka({
-    transport: new Transport("https://graphql.anilist.co", {
-        credentials: false
-    })
-});
+import { PAGE_REQUEST, PAGE_RESPONSE } from '../actions/page';
 
 export const CALL_API = Symbol("Call API");
 
@@ -25,7 +19,7 @@ export default store => next => action => {
     next(actionWithoutCall);
 
     let { query, responseType } = callApi;
-    let { vars } = action.payload;
+    let vars = action.payload ? action.payload.vars : {};
     let meta = {}
     if(action.type === PAGE_REQUEST && responseType === PAGE_RESPONSE) {
         meta = {
@@ -34,6 +28,23 @@ export default store => next => action => {
         }
     }
 
+    let headers = {};
+    const {
+        auth: {
+            token
+        }
+    } = store.getState()
+    if(token) {
+        headers = {
+            'Authorization': `Bearer ${token}`
+        };
+    }
+    const client = new Lokka({
+        transport: new Transport("https://graphql.anilist.co", {
+            credentials: false,
+            headers
+        })
+    });
     return client.query(query, vars).then(
         response => next({
             meta,
