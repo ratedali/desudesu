@@ -1,6 +1,7 @@
 import { Lokka } from "lokka";
 import { Transport } from "lokka-transport-http";
 import { PAGE_REQUEST, PAGE_RESPONSE } from '../actions/page';
+import { MEDIA_LISTS_REQUEST, MEDIA_LISTS_RESPONSE } from '../actions/lists';
 
 export const CALL_API = Symbol("Call API");
 
@@ -25,6 +26,11 @@ export default store => next => action => {
         meta = {
             contentType: action.payload.contentType,
             page: action.payload.vars.page
+        }
+    } if (action.type === MEDIA_LISTS_REQUEST && responseType === MEDIA_LISTS_RESPONSE) {
+        meta = {
+            username: action.payload.vars.username,
+            mediaType: action.payload.vars.mediaType
         }
     }
 

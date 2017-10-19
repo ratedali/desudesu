@@ -4,47 +4,40 @@ import PropTypes from "prop-types";
 class MediaList extends Component {
 
     static propTypes = {
-        userName: PropTypes.string.isRequired,
-        type: PropTypes.string.isRequired,
+        username: PropTypes.string,
+        mediaType: PropTypes.string.isRequired,
+        listType: PropTypes.string.isRequired,
         isLoading: PropTypes.bool,
-        lists: PropTypes.array,
+        list: PropTypes.array,
         error: PropTypes.string,
         loadMediaLists: PropTypes.func.isRequired
     };
 
     componentWillMount() {
         this.props.loadMediaLists({
-            userName: this.props.userName,
-            type: this.props.type
+            username: this.props.username,
+            mediaType: this.props.mediaType,
+            listType: this.props.listType,
         })
     }
 
     render() {
-        if(this.props.error) {
-            return (<p> Error: {this.props.error} </p>)
-        }
-
-        if(this.props.isLoading) {
-            return (<p>Loading...</p>)
-        }
-        
-        if(!this.props.lists) {
-            return null;
-        }
-
-        return (
-        <div>
-            {this.props.lists.map(list => (
-                <div key={list.status}>
-                    <h1>{list.status}</h1>
-                    {list.items.map(item => (
-                        <li key={item.media.id}>
-                            {item.media.title.romaji} - {item.score}
+        const {
+            list
+        } = this.props;
+        return ( list ?
+            <ul>
+                {
+                    list.map(({mediaId, progress, score, status}) => (
+                        <li key={mediaId}>
+                            <p>id: {mediaId}</p>
+                            <p>progress: {progress}</p>
+                            <p>score: {score}</p>
+                            <p>stats: {status}</p>
                         </li>
-                    ))}
-                </div>
-            ))}
-        </div>
+                    ))
+                }
+            </ul> : null
         );
     }
 }

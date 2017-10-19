@@ -17,9 +17,9 @@ const mapStateToProps = (state, ownProps) => {
     let currentSection = "unknown";
     if(locationMatches("/browse")) {
         currentSection = "browse";
-    } else if (locationMatches("/list/anime")) {
+    } else if (locationMatches("/list/:username/anime")) {
         currentSection = "anime";
-    } else if (locationMatches("/list/manga")) {
+    } else if (locationMatches("/list/:username/manga")) {
         currentSection = "manga";
     } else if (locationMatches("/", true)) {
         currentSection = "home";

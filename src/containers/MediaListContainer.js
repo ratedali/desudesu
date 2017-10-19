@@ -1,16 +1,43 @@
 import { connect } from "react-redux";
-import { loadMediaLists } from "../actions/listActions";
+import { withRouter } from "react-router";
+import { loadMediaLists } from "../actions/lists";
 import MediaList from "../components/MediaList";
+import { mediaTypeFromMatchParam as getMediaType } from "../utils";
 
 const mapStateToProps = (state, ownProps) => {
-    const userName = ownProps.userName;
-    const type = ownProps.type;
+    const {
+        match: {
+            params: {
+                username,
+                mediaType: mediaTypeParam,
+            }
+        },
+        listType
+     } = ownProps;
+     const mediaType = getMediaType(mediaTypeParam);
+
     const sharedProps = {
-        userName, type
+        username,
+        mediaType,
+        listType
     }
 
-    let { isLoading, error } = state['mediaLists'];
-    
+    const userData = state.lists[username];
+
+    if(!userData ||
+        !userData[mediaType]) {
+        return sharedProps;
+    }
+
+    const {
+        [mediaType]: {
+            isLoading,
+            error,
+            errorObject,
+            lists
+        }
+    } = userData;
+
     if(isLoading) {
         return {
             ...sharedProps,
@@ -19,25 +46,30 @@ const mapStateToProps = (state, ownProps) => {
     }
 
     if(error) {
-        error = state['mediaLists'].errorObject.message
         return {
             ...sharedProps,
-            error
+            error: errorObject.message
         }
     }
-    if(!state['mediaLists'].response) {
+
+    if(!lists[listType]) {
         return sharedProps;
     }
 
-    const { response: { statusLists } } = state['mediaLists']
-    const lists = Object.keys(statusLists).map(key => ({
-        status: key,
-        items: statusLists[key]
-    }))
+    const {
+        [listType]: list
+    } = lists;
+
+    if(!list) {
+        return sharedProps;
+    }
+
     return {
         ...sharedProps,
-        lists
+        list
     };
 };
 
-export default connect(mapStateToProps, { loadMediaLists })(MediaList)
+export default withRouter(connect(mapStateToProps, { 
+    loadMediaLists 
+})(MediaList));
