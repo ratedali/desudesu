@@ -1,6 +1,7 @@
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
-import MediaList from "../components/MediaList";
+import { loadMediaLists } from "../actions/lists";
+import UserMediaLists from "../components/UserMediaLists";
 import { mediaTypeFromMatchParam as getMediaType } from "../utils";
 
 const mapStateToProps = (state, ownProps) => {
@@ -10,16 +11,13 @@ const mapStateToProps = (state, ownProps) => {
                 username,
                 mediaType: mediaTypeParam,
             }
-        },
-        listType,
-        custom
+        }
      } = ownProps;
      const mediaType = getMediaType(mediaTypeParam);
 
     const sharedProps = {
         username,
-        mediaType,
-        listType
+        mediaType
     }
 
     const userData = state.lists[username];
@@ -34,7 +32,8 @@ const mapStateToProps = (state, ownProps) => {
             isLoading,
             error,
             errorObject,
-            [custom ? 'customLists' : 'lists']: lists
+            lists,
+            customLists
         }
     } = userData;
 
@@ -52,22 +51,11 @@ const mapStateToProps = (state, ownProps) => {
         }
     }
 
-    if(!lists[listType]) {
-        return sharedProps;
-    }
-
-    const {
-        [listType]: list
-    } = lists;
-
-    if(!list) {
-        return sharedProps;
-    }
-
     return {
         ...sharedProps,
-        list
-    };
-};
+        listTypes: Object.keys(lists),
+        customListTypes: Object.keys(customLists),
+    }
+}
 
-export default withRouter(connect(mapStateToProps)(MediaList));
+export default withRouter(connect(mapStateToProps, { loadMediaLists })(UserMediaLists));

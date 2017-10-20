@@ -2,6 +2,7 @@ import { Lokka } from "lokka";
 import { Transport } from "lokka-transport-http";
 import { PAGE_REQUEST, PAGE_RESPONSE } from '../actions/page';
 import { MEDIA_LISTS_REQUEST, MEDIA_LISTS_RESPONSE } from '../actions/lists';
+import { MEDIA_REQUEST, MEDIA_RESPONSE } from '../actions/media';
 
 export const CALL_API = Symbol("Call API");
 
@@ -27,9 +28,14 @@ export default store => next => action => {
             contentType: action.payload.contentType,
             page: action.payload.vars.page
         }
-    } if (action.type === MEDIA_LISTS_REQUEST && responseType === MEDIA_LISTS_RESPONSE) {
+    } else if (action.type === MEDIA_LISTS_REQUEST && responseType === MEDIA_LISTS_RESPONSE) {
         meta = {
             username: action.payload.vars.username,
+            mediaType: action.payload.vars.mediaType
+        }
+    } else if (action.type === MEDIA_REQUEST && responseType === MEDIA_RESPONSE) {
+        meta = {
+            id: action.payload.vars.id,
             mediaType: action.payload.vars.mediaType
         }
     }
@@ -52,16 +58,21 @@ export default store => next => action => {
         })
     });
     return client.query(query, vars).then(
-        response => next({
-            meta,
-            type: responseType,
-            payload: response
-        }),
-        error => next({
-            meta,
-            type: responseType,
-            error: true,
-            payload: error
-        })
+        response => {
+            next({
+                meta,
+                type: responseType,
+                payload: response
+            });
+            return response;
+        },
+        error => {
+            next({
+                meta,
+                type: responseType,
+                error: true,
+                payload: error
+            });
+        }
     );
 }

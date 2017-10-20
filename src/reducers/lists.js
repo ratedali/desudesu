@@ -1,4 +1,3 @@
-import _ from "lodash/fp";
 import { MEDIA_LISTS_REQUEST, MEDIA_LISTS_RESPONSE } from "../actions/lists";
 
 export default function mediaList(state = {}, action) {
@@ -61,11 +60,13 @@ function responseReducer(state = {}, action) {
     } else {
         const {
             MediaListCollection: {
-                statusLists: lists
+                statusLists: lists,
+                customLists
             }
         } = payload;
         newState[username][mediaType] = {
-            lists
+            lists,
+            customLists
         }
     }
     return newState;

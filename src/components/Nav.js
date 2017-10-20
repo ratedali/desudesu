@@ -196,6 +196,17 @@ class Nav extends Component {
             theme, 
         } = this.props;
 
+        let draweItems = [
+            ['/', 'home', 'Home', 'home'],
+            ['/browse', 'dashboard', 'Browse', 'browse'],
+        ];
+        if(user) {
+            draweItems = draweItems.concat([
+                [`/list/${user.name}/anime`, 'video_library', 'Anime List', 'anime'],
+                [`/list/${user.name}/manga`, 'photo_library', 'Manga List', 'manga']
+            ]);
+        }
+
         const drawerContent = (
             <div>
                 <Divider/>
@@ -203,19 +214,15 @@ class Nav extends Component {
                 <div>
                     <ListItem onClick={this.navigateTo('/profile')}>
                         <Avatar alt={user.name} src={user.avatar.medium}/>
-                        <ListItemText primary="Profile" secondary={user.name}/>
+                        <ListItemText primary={user.name} secondary="Your Profile"/>
                     </ListItem>
                     <Divider/>
                 </div> :
                 null
                 }
                 <List>
-                    {[
-                        ['/', 'home', 'Home', 'home'],
-                        ['/browse', 'dashboard', 'Browse', 'browse'],
-                        ['/list/anime', 'video_library', 'Anime List', 'anime'],
-                        ['/list/manga', 'photo_library', 'Manga List', 'manga']
-                    ].map(([path, icon, title, key]) => (
+                    {
+                        draweItems.map(([path, icon, title, key]) => (
                             <ListItem onClick={this.navigateTo(path)} key={key}
                              button divider
                              className={classNames({
