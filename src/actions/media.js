@@ -1,4 +1,5 @@
 import { CALL_API } from '../middleware/api';
+import { loadMediaFromCache, cacheMedia } from './caching';
 
 export const MEDIA_REQUEST = Symbol('Media Request');
 export const MEDIA_RESPONSE = Symbol('Media Response');
@@ -56,10 +57,35 @@ export const loadMedia = vars => (dispatch, getState) => {
         mediaType,
         id,
     } = vars;
+
     const mediaData = getState().media[mediaType];
     if(mediaData && mediaData[id]) {
         return null;
     }
 
-    return dispatch(fetchMedia(vars));
+    let networkFinished = false;
+    const network = dispatch(fetchMedia(vars)).then(
+        data => {
+            networkFinished = true;
+            cacheMedia(id, data.Media);
+            return data;
+        }
+    );
+    const cache = loadMediaFromCache(id).then(media => {
+        const payload = {
+            Media: media
+        };
+        if(!networkFinished) {
+            dispatch({
+                type: MEDIA_RESPONSE,
+                meta: {
+                    mediaType,
+                    id
+                },
+                payload
+            });
+        }
+        return payload;
+    }).catch(() => Promise.resolve());
+    return Promise.all([network, cache]);
 }

@@ -5,6 +5,7 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "history": "^4.7.2",
+    "idb": "^2.0.4",
     "lodash": "^4.17.4",
     "lokka": "^1.7.0",
     "lokka-transport-http": "^1.6.1",

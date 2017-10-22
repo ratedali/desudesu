@@ -64,6 +64,12 @@ function responseReducer(state = {}, action) {
                 customLists
             }
         } = payload;
+        Object.keys(lists).forEach(key => {
+            lists[key].forEach(item => delete item.media);
+        });
+        Object.keys(customLists).forEach(key => {
+            customLists[key].forEach(item => delete item.media);
+        });
         newState[username][mediaType] = {
             lists,
             customLists
